@@ -12,6 +12,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginService } from "../../services/LoginService";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function LoginBox() {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ export default function LoginBox() {
   // Controlled input state for login credentials
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { setToken } = useContext(AuthContext);
 
   /**
    * Sends login request to backend via service.
@@ -29,8 +32,12 @@ export default function LoginBox() {
     const data = await LoginService(username, password);
 
     if (data?.token) {
+      //console.log(data.token);
       sessionStorage.setItem("token", data.token);
-      navigate("/feed");
+      // Using the AuthContext to set the token, this updates the context and triggers any necessary re-renders
+      setToken(data.token);
+
+      navigate("/dashboard");
 
       console.info("Auth success: token stored in sessionStorage.");
     } else {
