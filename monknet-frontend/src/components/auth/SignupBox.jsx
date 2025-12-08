@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { SignUpService } from "../../services/SignUpService";
 import { initiateGoogleAuth } from "../../services/GoogleAuthService";
+import logo from "../../assets/logo.png";
 
 export default function SignupBox() {
   const navigate = useNavigate();
@@ -43,88 +44,50 @@ export default function SignupBox() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
-      </div>
-
-      <div className="glass-effect w-full max-w-md rounded-3xl p-8 sm:p-10 animate-fade-in relative z-10">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="w-full max-w-md">
+        {/* MonkNet Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full gradient-primary mb-4 shadow-lg">
-            <span className="text-3xl">✨</span>
-          </div>
-          <h1 className="text-4xl font-bold text-gradient mb-2">Join MonkNet</h1>
-          <p className="text-slate-600">Create your account and get started</p>
+          <img src={logo} alt="MonkNet" className="w-20 h-20 mx-auto mb-6" />
+          <h1 className="text-3xl font-bold text-[#0f1419] mb-2">Join MonkNet today</h1>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Username
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
-                placeholder="Choose a username"
-                value={username}
-                autoComplete="username"
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
+            <input
+              type="text"
+              className="w-full px-4 py-3 bg-white border border-[#cfd9de] rounded text-[#0f1419] text-[17px] focus:border-[#1d9bf0] focus:ring-1 focus:ring-[#1d9bf0] outline-none transition-colors"
+              placeholder="Username"
+              value={username}
+              autoComplete="username"
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Email
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <input
-                type="email"
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
-                placeholder="Enter your email"
-                value={email}
-                autoComplete="email"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+            <input
+              type="email"
+              className="w-full px-4 py-3 bg-white border border-[#cfd9de] rounded text-[#0f1419] text-[17px] focus:border-[#1d9bf0] focus:ring-1 focus:ring-[#1d9bf0] outline-none transition-colors"
+              placeholder="Email"
+              value={email}
+              autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <input
-                type="password"
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
-                placeholder="Create a password"
-                value={password}
-                autoComplete="new-password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <input
+              type="password"
+              className="w-full px-4 py-3 bg-white border border-[#cfd9de] rounded text-[#0f1419] text-[17px] focus:border-[#1d9bf0] focus:ring-1 focus:ring-[#1d9bf0] outline-none transition-colors"
+              placeholder="Password"
+              value={password}
+              autoComplete="new-password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           <button
-            className="w-full gradient-primary text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200"
+            className="w-full bg-[#0f1419] text-white font-bold py-3 rounded-full hover:bg-[#272c30] transition-colors"
             onClick={handleSignUp}
           >
             Create Account
@@ -133,16 +96,16 @@ export default function SignupBox() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200"></div>
+              <div className="w-full border-t border-[#eff3f4]"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-slate-500">Or continue with</span>
+              <span className="px-4 bg-white text-[#536471]">or</span>
             </div>
           </div>
 
           {/* Google Sign-Up Button */}
           <button
-            className="w-full bg-white border border-slate-200 text-slate-700 font-semibold py-3 rounded-xl shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-3"
+            className="w-full bg-white border border-[#cfd9de] text-[#0f1419] font-bold py-3 rounded-full hover:bg-[#e7e9ea] transition-colors flex items-center justify-center gap-3"
             onClick={initiateGoogleAuth}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -155,16 +118,16 @@ export default function SignupBox() {
           </button>
         </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-slate-600">
+        <div className="mt-10 text-center">
+          <span className="text-[#536471]">
             Already have an account?{" "}
-            <button
-              className="text-gradient font-bold hover:underline"
-              onClick={() => navigate("/")}
-            >
-              Sign In
-            </button>
-          </p>
+          </span>
+          <button
+            className="text-[#1d9bf0] font-normal hover:underline"
+            onClick={() => navigate("/")}
+          >
+            Sign in
+          </button>
         </div>
       </div>
     </div>

@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Compass, PenSquare, Users } from "lucide-react";
+import { Home, User, Users, PenSquare, LogOut, MoreHorizontal } from "lucide-react";
+import logo from "../../assets/logo.png";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -13,99 +14,96 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="glass-effect sticky top-0 z-50 border-b border-slate-200/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo Section */}
-          <div className="flex items-center space-x-3">
+    <div className="sidebar-twitter">
+      {/* Logo */}
+      <div className="py-2 px-3">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="w-12 h-12 hover:bg-gray-100 rounded-full flex items-center justify-center transition-colors"
+        >
+          <img src={logo} alt="MonkNet" className="w-10 h-10" />
+        </button>
+      </div>
+
+      {/* Navigation */}
+      {user && (
+        <nav className="flex flex-col gap-1 flex-1">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="nav-link-twitter nav-link-twitter-active"
+          >
+            <Home size={26} />
+            <span className="hidden xl:inline">Home</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/users")}
+            className="nav-link-twitter"
+          >
+            <Users size={26} />
+            <span className="hidden xl:inline">Users</span>
+          </button>
+
+          <button
+            onClick={() => navigate(`/profile/${user.username}`)}
+            className="nav-link-twitter"
+          >
+            <User size={26} />
+            <span className="hidden xl:inline">Profile</span>
+          </button>
+
+          {/* Post Button */}
+          <button
+            onClick={() => navigate("/create-post")}
+            className="btn-twitter w-full mt-4 hidden xl:flex"
+          >
+            Post
+          </button>
+
+          <button
+            onClick={() => navigate("/create-post")}
+            className="icon-btn w-12 h-12 xl:hidden mt-4 bg-black hover:bg-gray-800"
+          >
+            <PenSquare size={24} className="text-white" />
+          </button>
+        </nav>
+      )}
+
+      {/* User Profile */}
+      {user && (
+        <div className="mt-auto mb-4 relative group">
+          <button className="flex items-center gap-3 p-3 rounded-full hover:bg-gray-100 w-full transition-colors">
+            <div className="avatar-twitter">
+              {user.username.charAt(0).toUpperCase()}
+            </div>
+            <div className="hidden xl:block flex-1 text-left">
+              <p className="text-sm font-bold text-primary">{user.username}</p>
+              <p className="text-sm text-secondary">@{user.username}</p>
+            </div>
+            <MoreHorizontal size={18} className="hidden xl:block text-primary" />
+          </button>
+
+          {/* Dropdown */}
+          <div className="absolute bottom-full left-0 mb-2 w-64 bg-white shadow-xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden border border-gray-200">
             <button
-              onClick={() => navigate("/dashboard")}
-              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+              onClick={handleLogout}
+              className="w-full px-4 py-3 text-left text-sm font-bold text-primary hover:bg-gray-100 transition-colors flex items-center gap-3"
             >
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-lg">
-                <span className="text-xl">🧘‍♂️</span>
-              </div>
-              <span className="text-xl font-bold text-gradient hidden sm:block">MonkNet</span>
+              <LogOut size={18} />
+              Log out @{user.username}
             </button>
           </div>
-
-          {/* Center Navigation - Explore and Post options */}
-          {user && (
-            <div className="flex items-center gap-2">
-              {/* Explore Button */}
-              <button 
-                onClick={() => navigate("/dashboard")}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200 font-medium"
-              >
-                <Compass size={20} />
-                <span className="hidden sm:inline" >Explore</span>
-              </button>
-
-              {/* Users Button */}
-              <button 
-                onClick={() => navigate("/users")}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200 font-medium"
-              >
-                <Users size={20} />
-                <span className="hidden sm:inline">Users</span>
-              </button>
-
-              {/* Post Button */}
-              <button 
-                onClick={() => navigate("/create-post")}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white hover:shadow-lg transition-all duration-200 font-medium"
-              >
-                <PenSquare size={20} />
-                <span className="hidden sm:inline">Post</span>
-              </button>
-            </div>
-          )}
-
-          {/* User Section */}
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full">
-                <span className="text-sm font-medium text-slate-700">Welcome,</span>
-                <span className="text-sm font-bold text-gradient">{user.username}</span>
-              </div>
-              
-              {/* User Avatar with Dropdown Menu */}
-              <div className="relative group">
-                <button className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center text-white font-bold shadow-lg hover:shadow-xl transition-all">
-                  {user.username.charAt(0).toUpperCase()}
-                </button>
-                
-                <div className="absolute right-0 mt-2 w-48 glass-effect rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden">
-                  <div className="py-2">
-                    <button 
-                      onClick={() => navigate(`/profile/${user.username}`)}
-                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all">
-                      Profile
-                    </button>
-                    <button className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all">
-                      Settings
-                    </button>
-                    <div className="border-t border-slate-200 my-1"></div>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-all font-medium"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <button
-              onClick={() => navigate("/login")}
-              className="px-6 py-2 gradient-primary text-white font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-            >
-              Login
-            </button>
-          )}
         </div>
-      </div>
-    </nav>
+      )}
+
+      {!user && (
+        <button
+          onClick={() => navigate("/login")}
+          className="btn-twitter w-full mb-4"
+        >
+          Sign in
+        </button>
+      )}
+    </div>
   );
 }

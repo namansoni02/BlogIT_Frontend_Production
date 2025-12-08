@@ -61,91 +61,57 @@ export default function UserStatsBox({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-4 animate-fade-in">
-      {/* User Profile Section */}
-      <div className="flex flex-col items-center mb-6">
-        {/* User Avatar with gradient background - clickable */}
+    <div className="card-twitter">
+      {/* Title */}
+      <h2 className="text-xl font-bold text-[#0f1419] p-4 pb-3">Your Profile</h2>
+      
+      {/* Followers and Following Stats */}
+      <div className="px-4 pb-4 border-b border-[#eff3f4]">
         <button
           onClick={() => navigate(`/profile/${userName}`)}
-          className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-3xl font-bold mb-3 shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+          className="flex gap-4 hover:underline"
         >
-          {userName ? userName.charAt(0).toUpperCase() : 'U'}
+          <div>
+            <span className="font-bold text-[#0f1419]">{formatNumber(following)}</span>
+            <span className="text-[#536471] text-sm ml-1">Following</span>
+          </div>
+          <div>
+            <span className="font-bold text-[#0f1419]">{formatNumber(followers)}</span>
+            <span className="text-[#536471] text-sm ml-1">Followers</span>
+          </div>
         </button>
-        
-        {/* User Name - clickable */}
-        {userName && (
-          <button
-            onClick={() => navigate(`/profile/${userName}`)}
-            className="text-xl font-bold text-gray-900 mb-1 hover:text-purple-600 transition-colors"
-          >
-            {userName}
-          </button>
-        )}
-        
-        {/* User Bio */}
-        {userBio && (
-          <p className="text-sm text-gray-500 text-center">{userBio}</p>
-        )}
       </div>
 
-      {/* Followers and Following Stats */}
-      <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-100">
-        {/* Followers Count */}
-        <div className="text-center">
-          <div className="text-2xl font-bold text-gray-900">{formatNumber(followers)}</div>
-          <div className="text-sm text-gray-500">Followers</div>
+      {/* Quick Stats */}
+      <div className="p-4 space-y-3">
+        {/* Posts */}
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-[#536471]">Posts</span>
+          <span className="font-semibold text-[#0f1419]">{formatNumber(postsCount)}</span>
         </div>
-        
-        {/* Following Count */}
-        <div className="text-center">
-          <div className="text-2xl font-bold text-gray-900">{formatNumber(following)}</div>
-          <div className="text-sm text-gray-500">Following</div>
+
+        {/* Likes */}
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-[#536471]">Total Likes</span>
+          <span className="font-semibold text-[#0f1419]">{formatNumber(likes)}</span>
+        </div>
+
+        {/* Views */}
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-[#536471]">Profile Views</span>
+          <span className="font-semibold text-[#0f1419]">{formatNumber(views)}</span>
         </div>
       </div>
 
-      {/* Detailed Statistics Grid */}
-      <div className="space-y-3">
-        {/* postsCount Stat */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
-              <FileText size={20} className="text-white" />
-            </div>
-            <span className="font-medium text-gray-700">postsCount</span>
-          </div>
-          <span className="text-lg font-bold text-blue-600">{formatNumber(postsCount)}</span>
-        </div>
-
-        {/* Likes Stat */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
-              <Heart size={20} className="text-white" />
-            </div>
-            <span className="font-medium text-gray-700">Total Likes</span>
-          </div>
-          <span className="text-lg font-bold text-red-600">{formatNumber(likes)}</span>
-        </div>
-
-        {/* Views Stat */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
-              <Eye size={20} className="text-white" />
-            </div>
-            <span className="font-medium text-gray-700">Profile Views</span>
-          </div>
-          <span className="text-lg font-bold text-purple-600">{formatNumber(views)}</span>
-        </div>
+      {/* View Profile Button */}
+      <div className="p-4 pt-0">
+        <button 
+          onClick={() => navigate(`/profile/${userName}`)}
+          className="w-full btn-twitter"
+        >
+          View Profile
+        </button>
       </div>
-
-      {/* Edit Profile Button */}
-      <button 
-        onClick={() => navigate(`/profile/${userName}`)}
-        className="w-full mt-6 px-4 py-3 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200 hover-lift"
-      >
-        Edit Profile
-      </button>
     </div>
   );
 }

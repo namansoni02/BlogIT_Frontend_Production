@@ -79,79 +79,102 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="container-twitter">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Center Feed */}
+      <div className="feed-twitter">
+        {/* Feed Header */}
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-[#eff3f4]">
+          <div className="px-4 py-3">
+            <h2 className="text-xl font-bold text-[#0f1419]">Home</h2>
+          </div>
           
-          {/* Left Sidebar - Profile Card */}
-          <div className="hidden lg:block lg:col-span-3">
-                 {data && <UserStatsBox data={data}/>}
+          {/* Feed Tabs */}
+          <div className="flex border-b border-[#eff3f4]">
+            <button className="tab-twitter active flex-1 py-4 font-semibold text-[#0f1419]">
+              For you
+            </button>
+            <button className="tab-twitter flex-1 py-4 font-semibold text-[#536471] hover:bg-gray-50">
+              Following
+            </button>
           </div>
-
-          {/* Center - Feed with Scrolling */}
-          <div className="col-span-1 lg:col-span-6">
-            <div 
-              ref={feedRef}
-              className="h-[calc(100vh-180px)] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-gray-100 pr-2"
-            >
-              <div className="space-y-4">
-                {/* Loading indicator */}
-                {loading && posts.length === 0 && (
-                  <div className="flex justify-center items-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-                  </div>
-                )}
-
-                {/* Posts display */}
-                {posts.length > 0 ? (
-                  posts.map((post) => {
-                    // Skip if post is just an ID string instead of an object
-                    if (typeof post === 'string') {
-                      console.warn("Skipping invalid post (ID only):", post);
-                      return null;
-                    }
-                    return <PostBox key={post._id || post.id} post={post} />;
-                  })
-                ) : (
-                  !loading && (
-                    <div className="text-center py-12 bg-white rounded-xl shadow-md">
-                      <p className="text-gray-500 text-lg">No posts available yet.</p>
-                      <p className="text-gray-400 text-sm mt-2">Be the first to create a post!</p>
-                    </div>
-                  )
-                )}
-
-                {/* Load More Button - Shows when scrolled to end */}
-                {hasScrolledToEnd && !loading && posts.length > 0 && (
-                  <div className="flex justify-center py-6">
-                    <button
-                      onClick={handleLoadMore}
-                      className="flex flex-col items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover-lift"
-                    >
-                      <span className="font-medium">Load More Posts</span>
-                      <ChevronDown size={24} className="animate-bounce" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Loading more indicator */}
-                {loading && posts.length > 0 && (
-                  <div className="flex justify-center py-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Sidebar - Suggestions */}
-          <div className="hidden lg:block lg:col-span-3">
-            
-          </div>
-
         </div>
+
+        {/* Posts Feed */}
+        <div ref={feedRef} className="overflow-y-auto">
+          {/* Loading indicator */}
+          {loading && posts.length === 0 && (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#1d9bf0] border-t-transparent"></div>
+            </div>
+          )}
+
+          {/* Posts display */}
+          {posts.length > 0 ? (
+            posts.map((post) => {
+              if (typeof post === 'string') {
+                console.warn("Skipping invalid post (ID only):", post);
+                return null;
+              }
+              return <PostBox key={post._id || post.id} post={post} />;
+            })
+          ) : (
+            !loading && (
+              <div className="text-center py-12 px-4">
+                <p className="text-[#536471] text-lg">No posts available yet.</p>
+                <p className="text-[#536471] text-sm mt-2">Be the first to create a post!</p>
+              </div>
+            )
+          )}
+
+          {/* Load More Button */}
+          {hasScrolledToEnd && !loading && posts.length > 0 && (
+            <div className="flex justify-center py-6 border-t border-[#eff3f4]">
+              <button
+                onClick={handleLoadMore}
+                className="flex items-center gap-2 px-6 py-2 text-[#1d9bf0] hover:bg-[#1d9bf0]/10 rounded-full transition-colors font-semibold"
+              >
+                <span>Load More Posts</span>
+                <ChevronDown size={20} />
+              </button>
+            </div>
+          )}
+
+          {/* Loading more indicator */}
+          {loading && posts.length > 0 && (
+            <div className="flex justify-center py-4 border-t border-[#eff3f4]">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#1d9bf0] border-t-transparent"></div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Sidebar - Widgets */}
+      <div className="widgets-twitter">
+        {/* What's happening */}
+        <div className="card-twitter mb-4">
+          <h2 className="text-xl font-bold text-[#0f1419] p-4 pb-3">What's happening</h2>
+          
+          <div className="hover:bg-gray-50 transition-colors cursor-pointer p-4 border-b border-[#eff3f4]">
+            <div className="text-xs text-[#536471] mb-1">Trending in Technology</div>
+            <div className="font-semibold text-[#0f1419]">#BlogIT</div>
+            <div className="text-xs text-[#536471] mt-1">2,847 posts</div>
+          </div>
+
+          <div className="hover:bg-gray-50 transition-colors cursor-pointer p-4 border-b border-[#eff3f4]">
+            <div className="text-xs text-[#536471] mb-1">Trending in Coding</div>
+            <div className="font-semibold text-[#0f1419]">#WebDev</div>
+            <div className="text-xs text-[#536471] mt-1">5,234 posts</div>
+          </div>
+
+          <div className="hover:bg-gray-50 transition-colors cursor-pointer p-4">
+            <div className="text-[#1d9bf0] text-sm hover:underline">Show more</div>
+          </div>
+        </div>
+
+        {/* User Stats */}
+        {data && <UserStatsBox data={data}/>}
       </div>
     </div>
   );

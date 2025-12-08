@@ -118,86 +118,85 @@ export default function PostBox({ post }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4 mb-3">
-      {/* Post Header - Shows author info and options menu */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          {/* Author Avatar - Shows first letter of author's username with gradient background */}
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold">
+    <div className="post-card">
+      {/* Post Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-3 flex-1">
+          {/* Author Avatar */}
+          <div className="avatar-twitter flex-shrink-0">
             {post?.author?.username?.charAt(0).toUpperCase() || 'U'}
           </div>
-          {/* Author Name and Timestamp */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900">{post?.author?.username || 'Anonymous'}</h3>
-            <p className="text-xs text-gray-500">{formatTimestamp(post?.createdAt)}</p>
+          
+          {/* Post Content */}
+          <div className="flex-1 min-w-0">
+            {/* Author Info */}
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-bold text-[#0f1419] hover:underline cursor-pointer">
+                {post?.author?.username || 'Anonymous'}
+              </h3>
+              <span className="text-[#536471]">·</span>
+              <span className="text-[#536471] text-sm">{formatTimestamp(post?.createdAt)}</span>
+            </div>
+
+            {/* Post Title & Content */}
+            {post?.title && (
+              <h2 className="text-lg font-bold text-[#0f1419] mb-2">{post.title}</h2>
+            )}
+            <p className="text-[#0f1419] text-[15px] leading-relaxed mb-3">
+              {post?.content || 'No content available'}
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between max-w-md -ml-2">
+              {/* Comment */}
+              <button className="icon-btn text-[#536471] hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10">
+                <MessageCircle size={18} />
+                <span className="text-sm">{post?.comments || 0}</span>
+              </button>
+
+              {/* Like */}
+              <button 
+                onClick={handleLike}
+                className={`icon-btn ${
+                  liked 
+                    ? 'text-[#f91880]' 
+                    : 'text-[#536471] hover:text-[#f91880] hover:bg-[#f91880]/10'
+                }`}
+              >
+                <Heart 
+                  size={18} 
+                  fill={liked ? 'currentColor' : 'none'}
+                />
+                <span className="text-sm">{likesCount}</span>
+              </button>
+
+              {/* Share */}
+              <button className="icon-btn text-[#536471] hover:text-[#00ba7c] hover:bg-[#00ba7c]/10">
+                <Share2 size={18} />
+                <span className="text-sm">{post?.shares || 0}</span>
+              </button>
+
+              {/* Bookmark */}
+              <button 
+                onClick={handleBookmark}
+                className={`icon-btn ${
+                  bookmarked 
+                    ? 'text-[#1d9bf0]' 
+                    : 'text-[#536471] hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10'
+                }`}
+              >
+                <Bookmark 
+                  size={18} 
+                  fill={bookmarked ? 'currentColor' : 'none'}
+                />
+              </button>
+            </div>
           </div>
         </div>
-        {/* More Options Button - For edit, delete, report, etc. */}
-        <button className="text-gray-400 hover:text-gray-600 transition-colors">
-          <MoreHorizontal size={16} />
-        </button>
-      </div>
 
-      {/* Post Content - Main text and optional title */}
-      <div className="mb-3">
-        {/* Post Title */}
-        {post?.title && (
-          <h2 className="text-base font-bold text-gray-900 mb-1">{post.title}</h2>
-        )}
-        {/* Post Content Text */}
-        <p className="text-sm text-gray-700 leading-relaxed">{post?.content || 'No content available'}</p>
-      </div>
-
-      {/* Post Stats - Shows engagement metrics */}
-      <div className="flex items-center gap-4 py-2 border-t border-gray-100 text-xs text-gray-500">
-        <span>{likesCount} likes</span>
-        <span>{post?.comments || 0} comments</span>
-        <span>{post?.shares || 0} shares</span>
-      </div>
-
-      {/* Action Buttons - Interactive buttons for user engagement */}
-      <div className="flex items-center justify-around pt-2 border-t border-gray-100">
-        {/* Like Button - Changes color and fills heart icon when liked */}
-        <button 
-          onClick={handleLike}
-          className={`flex items-center gap-1 px-2 py-1.5 rounded-md transition-all duration-200 ${
-            liked 
-              ? 'text-red-500' 
-              : 'text-gray-600 hover:bg-gray-50'
-          }`}
-        >
-          <Heart 
-            size={16} 
-            fill={liked ? 'currentColor' : 'none'}
-          />
-          <span className="text-xs font-medium">Like</span>
-        </button>
-
-        {/* Comment Button - Opens comment section (to be implemented) */}
-        <button className="flex items-center gap-1 px-2 py-1.5 rounded-md text-gray-600 hover:bg-gray-50 transition-all duration-200">
-          <MessageCircle size={16} />
-          <span className="text-xs font-medium">Comment</span>
-        </button>
-
-        {/* Share Button - Opens share dialog (to be implemented) */}
-        <button className="flex items-center gap-1 px-2 py-1.5 rounded-md text-gray-600 hover:bg-gray-50 transition-all duration-200">
-          <Share2 size={16} />
-          <span className="text-xs font-medium">Share</span>
-        </button>
-
-        {/* Bookmark Button - Saves post for later, fills icon when bookmarked */}
-        <button 
-          onClick={handleBookmark}
-          className={`flex items-center gap-1 px-2 py-1.5 rounded-md transition-all duration-200 ${
-            bookmarked 
-              ? 'text-blue-500' 
-              : 'text-gray-600 hover:bg-gray-50'
-          }`}
-        >
-          <Bookmark 
-            size={16} 
-            fill={bookmarked ? 'currentColor' : 'none'}
-          />
+        {/* More Options */}
+        <button className="text-[#536471] hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10 p-2 rounded-full transition-colors">
+          <MoreHorizontal size={18} />
         </button>
       </div>
     </div>
