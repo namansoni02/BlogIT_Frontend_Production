@@ -7,6 +7,9 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
+import FactBox from "../components/common/FactBox";
+import ExtinctAnimalFact from "../components/common/ExtinctAnimalFact";
+import ProfileFactBox from "../components/common/ProfileFactBox";
 import { getAllUsers } from "../services/UsersService";
 import { followUser, unfollowUser } from "../services/FollowService";
 import { AuthContext } from "../context/AuthContext";
@@ -28,6 +31,13 @@ export default function UsersPage() {
         setLoading(true);
         const data = await getAllUsers();
         
+        if (!data || data.length === 0) {
+          console.log("No users found");
+          setUsers([]);
+          setFilteredUsers([]);
+          return;
+        }
+        
         // Filter out current user
         const otherUsers = data.filter(u => u.username !== currentUser?.username);
         setUsers(otherUsers);
@@ -43,7 +53,6 @@ export default function UsersPage() {
         setFollowingMap(following);
       } catch (error) {
         console.error("Error loading users:", error);
-        alert("Failed to load users");
       } finally {
         setLoading(false);
       }
@@ -100,35 +109,43 @@ export default function UsersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
+      <div className="container-twitter">
         <Navbar />
-        <div className="flex items-center justify-center h-[calc(100vh-80px)]">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600"></div>
+        <div className="feed-twitter">
+          <div className="flex items-center justify-center h-[calc(100vh-80px)]">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600"></div>
+          </div>
+        </div>
+        <div className="widgets-twitter">
+          <ProfileFactBox />
+          <FactBox />
+          <ExtinctAnimalFact />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="container-twitter">
       <Navbar />
       
-      <div className="max-w-5xl mx-auto pt-8 px-4 sm:px-6 lg:px-8 pb-12">
+      <div className="feed-twitter">
+        <div className="pt-8 px-4 sm:px-6 lg:px-8 pb-12">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div className="bg-white border-2 border-black rounded p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
-            <UsersIcon className="w-8 h-8 text-purple-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Discover Users</h1>
+            <UsersIcon className="w-8 h-8 text-black" />
+            <h1 className="text-3xl font-bold text-black">Discover Users</h1>
           </div>
           
           {/* Search Bar */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="w-5 h-5 text-slate-400" />
+              <Search className="w-5 h-5 text-gray-400" />
             </div>
             <input
               type="text"
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
+              className="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-300 rounded focus:ring-1 focus:ring-black focus:border-black transition-all outline-none"
               placeholder="Search users by username or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -137,11 +154,11 @@ export default function UsersPage() {
         </div>
 
         {/* Users List */}
-        <div className="bg-white rounded-xl shadow-md p-6">
+        <div className="bg-white border-2 border-black rounded p-6">
           {filteredUsers.length === 0 ? (
             <div className="text-center py-12">
-              <UsersIcon className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 text-lg">
+              <UsersIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 text-lg">
                 {searchQuery ? "No users found matching your search" : "No users to display"}
               </p>
             </div>
@@ -150,28 +167,28 @@ export default function UsersPage() {
               {filteredUsers.map((user) => (
                 <div
                   key={user._id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all"
+                  className="flex items-center justify-between p-4 rounded border-2 border-gray-300 hover:border-black transition-all"
                 >
                   <div 
                     className="flex items-center gap-4 flex-1 cursor-pointer"
                     onClick={() => handleUserClick(user.username)}
                   >
                     {/* Avatar */}
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                    <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center text-white text-xl font-bold">
                       {user.username.charAt(0).toUpperCase()}
                     </div>
 
                     {/* User Info */}
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-slate-900 hover:text-purple-600 transition-colors">
+                      <h3 className="text-lg font-semibold text-black hover:text-gray-700 transition-colors">
                         {user.username}
                       </h3>
-                      <p className="text-sm text-slate-500">{user.email}</p>
+                      <p className="text-sm text-gray-600">{user.email}</p>
                       <div className="flex gap-4 mt-1">
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-gray-500">
                           {user.followers?.length || 0} followers
                         </span>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-gray-500">
                           {user.following?.length || 0} following
                         </span>
                       </div>
@@ -184,10 +201,10 @@ export default function UsersPage() {
                       e.stopPropagation();
                       handleFollowToggle(user._id);
                     }}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                    className={`px-6 py-2 rounded font-semibold transition-all ${
                       followingMap[user._id]
-                        ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                        : "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg"
+                        ? "bg-white border-2 border-black text-black hover:bg-gray-100"
+                        : "bg-black text-white hover:bg-gray-800"
                     }`}
                   >
                     {followingMap[user._id] ? "Following" : "Follow"}
@@ -200,11 +217,19 @@ export default function UsersPage() {
 
         {/* Stats */}
         {filteredUsers.length > 0 && (
-          <div className="mt-6 text-center text-sm text-slate-500">
+          <div className="mt-6 text-center text-sm text-gray-600">
             Showing {filteredUsers.length} {filteredUsers.length === 1 ? "user" : "users"}
             {searchQuery && ` matching "${searchQuery}"`}
           </div>
         )}
+        </div>
+      </div>
+
+      {/* Right Sidebar - Widgets */}
+      <div className="widgets-twitter">
+        <ProfileFactBox />
+        <FactBox />
+        <ExtinctAnimalFact />
       </div>
     </div>
   );

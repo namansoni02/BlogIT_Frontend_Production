@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2 } from 'lucide-react';
 import likePostService from '@/services/likePostService';
+import deletePostService from '@/services/deletePostService';
 /**
  * PostBox Component
  * 
@@ -19,6 +20,7 @@ import likePostService from '@/services/likePostService';
  * @param {number} props.post.shares - Number of shares (default: 0)
  * @param {string} props.post.title - Post title
  * @param {string} props.post.updatedAt - ISO timestamp of last update
+ * @param {Function} props.onDelete - Callback function when post is deleted
  * 
  * @example
  * <PostBox post={{
@@ -37,15 +39,31 @@ import likePostService from '@/services/likePostService';
  *   updatedAt: "2025-12-06T18:57:15.460Z"
  * }} />
  */
-export default function PostBox({ post }) {
+export default function PostBox({ post, onDelete }) {
   // State for tracking if current user has liked the post
   // Get user data from sessionStorage and check if this post is in likedPosts array
+  // Get user data from sessionStorage
   const getUserData = () => {
     const userData = sessionStorage.getItem("userData");
     return userData ? JSON.parse(userData) : null;
   };
   
   const userData = getUserData();
+  
+  // Get user ID from JWT token
+  const getUserId = () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.userId;
+    } catch (e) {
+      return null;
+    }
+  };
+  
+  const userId = getUserId();
+  
   // likedPosts is an array of post IDs that the user has liked
   const likedPosts = userData?.likedPosts || [];
   const alreadyLiked = likedPosts.includes(post._id);
@@ -57,6 +75,30 @@ export default function PostBox({ post }) {
   
   // State for managing likes count (can increase/decrease based on user action)
   const [likesCount, setLikesCount] = useState(post?.likes || 0);
+
+  // State for showing delete confirmation menu
+  const [showDeleteMenu, setShowDeleteMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  // Check if current user is the author of the post
+  // Compare userId from sessionStorage with post author's ID
+  const isAuthor = userId === post?.author?._id;
+
+  // Close delete menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowDeleteMenu(false);
+      }
+    };
+
+    if (showDeleteMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showDeleteMenu]);
 
   /**
    * Formats ISO timestamp to relative time (e.g., "2 hours ago")
@@ -117,17 +159,41 @@ export default function PostBox({ post }) {
     setBookmarked(!bookmarked);
   };
 
+  /**
+   * Handles delete button click
+   * Deletes the post if user is the author
+   */
+  const handleDelete = async () => {
+    if (!isAuthor) {
+      alert("You can only delete your own posts");
+      return;
+    }
+
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await deletePostService(post._id);
+        // Call the onDelete callback to remove post from UI
+        if (onDelete) {
+          onDelete(post._id);
+        }
+      } catch (error) {
+        alert("Failed to delete post: " + error.message);
+      }
+    }
+    setShowDeleteMenu(false);
+  };
+
   return (
-    <div className="post-card">
+    <div className="post-card ">
       {/* Post Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between px-5">
         <div className="flex items-start gap-3 flex-1">
           {/* Author Avatar */}
-          <div className="avatar-twitter flex-shrink-0">
+          <div className="avatar-twitter flex-shrink-0 ">
             {post?.author?.username?.charAt(0).toUpperCase() || 'U'}
           </div>
           
-          {/* Post Content */}
+          {/* Post Content */}  
           <div className="flex-1 min-w-0">
             {/* Author Info */}
             <div className="flex items-center gap-2 mb-1">
@@ -195,9 +261,36 @@ export default function PostBox({ post }) {
         </div>
 
         {/* More Options */}
-        <button className="text-[#536471] hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10 p-2 rounded-full transition-colors">
-          <MoreHorizontal size={18} />
-        </button>
+        <div className="relative" ref={menuRef}>
+          <button 
+            onClick={() => setShowDeleteMenu(!showDeleteMenu)}
+            className={`p-2 rounded transition-colors ${
+              isAuthor 
+                ? 'text-green-600 hover:text-green-700 hover:bg-green-100' 
+                : 'text-[#536471] hover:text-[#f91880] hover:bg-[#f91880]/10'
+            }`}
+            title={isAuthor ? "Delete your post" : "Not your post - delete disabled"}
+          >
+            <MoreHorizontal size={18} />
+          </button>
+          
+          {showDeleteMenu && (
+            <div className="absolute right-0 top-10 bg-white border-2 border-black rounded shadow-lg z-10 min-w-[150px]">
+              <button
+                onClick={handleDelete}
+                className={`w-full flex items-center gap-2 px-4 py-2 text-sm ${
+                  isAuthor 
+                    ? 'text-red-600 hover:bg-red-50' 
+                    : 'text-gray-400 cursor-not-allowed'
+                } transition-colors rounded`}
+                disabled={!isAuthor}
+              >
+                <Trash2 size={16} />
+                Delete Post
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

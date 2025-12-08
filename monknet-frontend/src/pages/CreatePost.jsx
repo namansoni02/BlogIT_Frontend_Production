@@ -171,200 +171,195 @@ export default function CreatePost() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="container-twitter">
       <Navbar />
       
-      <div className="pt-20 px-6 max-w-4xl mx-auto">
-        {/* Main Content - Create Post Form */}
-        <div className="w-full">
+      {/* Center Feed */}
+      <div className="feed-twitter">
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-[#eff3f4] px-4 py-3">
+          <h1 className="text-xl font-bold text-[#0f1419]">Create Post</h1>
+        </div>
+
+        {/* Main Form */}
+        <div className="p-4 space-y-4">
           
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Sparkles className="text-purple-400" size={28} />
-              <h1 className="text-3xl font-bold text-white">Create Post</h1>
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm">
+              {error}
             </div>
+          )}
+
+          {/* Title Input */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[#0f1419] font-semibold text-sm">Title</label>
+              <span className={`text-xs ${title.length > TITLE_MAX ? 'text-red-500' : 'text-[#536471]'}`}>
+                {title.length}/{TITLE_MAX}
+              </span>
+            </div>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Give your post a title..."
+              maxLength={TITLE_MAX}
+              className="w-full bg-white border border-[#cfd9de] rounded-lg px-4 py-3 text-[#0f1419] placeholder-[#536471] focus:outline-none focus:border-[#1d9bf0] focus:ring-1 focus:ring-[#1d9bf0] transition-colors"
+            />
           </div>
 
-          {/* Main Form */}
-          <div className="glass-effect rounded-2xl p-6 space-y-6">
-            
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-300 text-sm">
-                {error}
-              </div>
-            )}
-
-            {/* Title Input */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-white font-semibold text-lg">Title</label>
-                <span className={`text-sm ${title.length > TITLE_MAX ? 'text-red-400' : 'text-gray-400'}`}>
-                  {title.length}/{TITLE_MAX}
-                </span>
-              </div>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Give your post a catchy title..."
-                maxLength={TITLE_MAX}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-              />
+          {/* Content Input */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[#0f1419] font-semibold text-sm">Content</label>
+              <span className={`text-xs ${content.length > CONTENT_MAX ? 'text-red-500' : 'text-[#536471]'}`}>
+                {content.length}/{CONTENT_MAX}
+              </span>
             </div>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="What's on your mind?"
+              maxLength={CONTENT_MAX}
+              rows={10}
+              className="w-full bg-white border border-[#cfd9de] rounded-lg px-4 py-3 text-[#0f1419] placeholder-[#536471] focus:outline-none focus:border-[#1d9bf0] focus:ring-1 focus:ring-[#1d9bf0] transition-colors resize-none"
+            />
+          </div>
 
-            {/* Content Input */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-white font-semibold text-lg">Content</label>
-                <span className={`text-sm ${content.length > CONTENT_MAX ? 'text-red-400' : 'text-gray-400'}`}>
-                  {content.length}/{CONTENT_MAX}
-                </span>
-              </div>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Share your thoughts with the world..."
-                maxLength={CONTENT_MAX}
-                rows={12}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"
+          {/* Image Preview */}
+          {imagePreview && (
+            <div className="relative rounded-lg overflow-hidden border border-[#eff3f4]">
+              <img 
+                src={imagePreview} 
+                alt="Preview" 
+                className="w-full max-h-96 object-cover"
               />
+              <button
+                onClick={removeImage}
+                className="absolute top-2 right-2 p-2 bg-black/70 rounded-full hover:bg-black transition-colors"
+              >
+                <X className="text-white" size={18} />
+              </button>
             </div>
+          )}
 
-            {/* Image Preview */}
-            {imagePreview && (
-              <div className="relative rounded-xl overflow-hidden">
-                <img 
-                  src={imagePreview} 
-                  alt="Preview" 
-                  className="w-full max-h-96 object-cover rounded-xl"
-                />
-                <button
-                  onClick={removeImage}
-                  className="absolute top-3 right-3 p-2 bg-black/50 backdrop-blur-sm rounded-full hover:bg-black/70 transition-colors"
+          {/* Tags */}
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-1 bg-[#1d9bf0]/10 text-[#1d9bf0] px-3 py-1 rounded-full text-sm border border-[#1d9bf0]/20"
                 >
-                  <X className="text-white" size={20} />
-                </button>
-              </div>
-            )}
-
-            {/* Tags */}
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center gap-1 bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm border border-purple-500/30"
+                  #{tag}
+                  <button
+                    onClick={() => removeTag(tag)}
+                    className="hover:text-[#1d9bf0]/70 transition-colors"
                   >
-                    #{tag}
-                    <button
-                      onClick={() => removeTag(tag)}
-                      className="hover:text-purple-100 transition-colors"
-                    >
-                      <X size={14} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
+                    <X size={14} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
 
-            {/* Tag Input */}
-            {tags.length < 5 && (
-              <div className="flex gap-2">
-                <div className="flex-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
-                  <Hash className="text-gray-400" size={18} />
-                  <input
-                    type="text"
-                    value={currentTag}
-                    onChange={(e) => setCurrentTag(e.target.value)}
-                    onKeyPress={handleTagKeyPress}
-                    placeholder="Add a tag (max 5)"
-                    className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
-                  />
-                </div>
-                <button
-                  onClick={addTag}
-                  disabled={!currentTag.trim()}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:opacity-50 text-white rounded-xl transition-colors"
-                >
-                  Add
-                </button>
+          {/* Tag Input */}
+          {tags.length < 5 && (
+            <div className="flex gap-2">
+              <div className="flex-1 flex items-center gap-2 bg-white border border-[#cfd9de] rounded-lg px-4 py-2">
+                <Hash className="text-[#536471]" size={18} />
+                <input
+                  type="text"
+                  value={currentTag}
+                  onChange={(e) => setCurrentTag(e.target.value)}
+                  onKeyPress={handleTagKeyPress}
+                  placeholder="Add a tag (max 5)"
+                  className="flex-1 bg-transparent text-[#0f1419] placeholder-[#536471] focus:outline-none"
+                />
               </div>
-            )}
+              <button
+                onClick={addTag}
+                disabled={!currentTag.trim()}
+                className="px-4 py-2 bg-[#0f1419] hover:bg-[#272c30] disabled:bg-[#536471] disabled:opacity-50 text-white rounded-lg transition-colors font-semibold text-sm"
+              >
+                Add
+              </button>
+            </div>
+          )}
 
-            {/* Toolbar */}
-            <div className="flex items-center justify-between pt-4 border-t border-white/10">
-              <div className="flex items-center gap-2">
-                {/* Image Upload */}
-                <label className="p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors" title="Add image">
-                  <Image className="text-gray-400" size={20} />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
-                
-                {/* Emoji (placeholder) */}
-                <button className="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add emoji">
-                  <Smile className="text-gray-400" size={20} />
-                </button>
-                
-                {/* Mention (placeholder) */}
-                <button className="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Mention someone">
-                  <AtSign className="text-gray-400" size={20} />
-                </button>
-              </div>
+          {/* Toolbar */}
+          <div className="flex items-center justify-between pt-4 border-t border-[#eff3f4]">
+            <div className="flex items-center gap-1">
+              {/* Image Upload */}
+              <label className="p-2 rounded-lg hover:bg-[#1d9bf0]/10 cursor-pointer transition-colors" title="Add image">
+                <Image className="text-[#1d9bf0]" size={20} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </label>
+              
+              {/* Emoji */}
+              <button className="p-2 rounded-lg hover:bg-[#1d9bf0]/10 transition-colors" title="Add emoji">
+                <Smile className="text-[#1d9bf0]" size={20} />
+              </button>
+              
+              {/* Mention */}
+              <button className="p-2 rounded-lg hover:bg-[#1d9bf0]/10 transition-colors" title="Mention someone">
+                <AtSign className="text-[#1d9bf0]" size={20} />
+              </button>
+            </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={loadDraft}
-                  className="px-5 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white rounded-xl transition-colors"
-                >
-                  Load Draft
-                </button>
-                <button
-                  onClick={saveDraft}
-                  disabled={!title && !content}
-                  className="px-5 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white rounded-xl transition-colors"
-                >
-                  Save Draft
-                </button>
-                <button
-                  onClick={publishPost}
-                  disabled={isPublishing || !title.trim() || !content.trim()}
-                  className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 text-white rounded-xl font-semibold transition-all flex items-center gap-2"
-                >
-                  {isPublishing ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                      Publishing...
-                    </>
-                  ) : (
-                    <>
-                      <Send size={18} />
-                      Publish
-                    </>
-                  )}
-                </button>
-              </div>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={loadDraft}
+                className="px-4 py-2 bg-white border border-[#cfd9de] hover:bg-gray-50 text-[#0f1419] rounded-full transition-colors font-semibold text-sm"
+              >
+                Load Draft
+              </button>
+              <button
+                onClick={saveDraft}
+                disabled={!title && !content}
+                className="px-4 py-2 bg-white border border-[#cfd9de] hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-[#0f1419] rounded-full transition-colors font-semibold text-sm"
+              >
+                Save Draft
+              </button>
+              <button
+                onClick={publishPost}
+                disabled={isPublishing || !title.trim() || !content.trim()}
+                className="px-5 py-2 bg-[#0f1419] hover:bg-[#272c30] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-bold transition-all flex items-center gap-2 text-sm"
+              >
+                {isPublishing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    Publish
+                  </>
+                )}
+              </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Tips Section */}
-          <div className="mt-6 glass-effect rounded-xl p-4">
-            <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
-              <Sparkles className="text-purple-400" size={16} />
-              Writing Tips
-            </h3>
-            <ul className="text-gray-400 text-sm space-y-1">
-              <li>• Use a clear and engaging title to grab attention</li>
-              <li>• Structure your content with paragraphs for better readability</li>
-              <li>• Add relevant tags to help others discover your post</li>
-              <li>• Use images to make your post more visually appealing</li>
+      {/* Right Sidebar - Tips */}
+      <div className="widgets-twitter">
+        <div className="card-twitter mt-4">
+          <h3 className="text-[#0f1419] font-bold text-lg p-4 pb-3">Writing Tips</h3>
+          <div className="px-4 pb-4">
+            <ul className="text-[#536471] text-sm space-y-2">
+              <li>• Use a clear and engaging title</li>
+              <li>• Structure content with paragraphs</li>
+              <li>• Add relevant tags</li>
+              <li>• Use images when appropriate</li>
             </ul>
           </div>
         </div>

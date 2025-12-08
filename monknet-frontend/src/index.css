@@ -18,23 +18,9 @@ body {
 
 /* Container */
 .container-twitter {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 275px 1fr 350px;
-  gap: 0;
-}
-
-@media (max-width: 1024px) {
-  .container-twitter {
-    grid-template-columns: 88px 1fr 350px;
-  }
-}
-
-@media (max-width: 768px) {
-  .container-twitter {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
 }
 
 /* Sidebar Styles */
@@ -43,40 +29,45 @@ body {
   top: 0;
   left: 0;
   height: 100vh;
-  width: 275px;
+  width: 20%;
   border-right: 1px solid #eff3f4;
   background: #ffffff;
   display: flex;
   flex-direction: column;
   padding: 0 12px;
+  z-index: 10;
 }
 
 @media (max-width: 1024px) {
   .sidebar-twitter {
-    width: 88px;
+    width: 80px;
     align-items: center;
   }
 }
 
 /* Main Feed */
 .feed-twitter {
+  flex: 1;
   min-height: 100vh;
+  width: 60%;
+  margin-left: 20%;
+  margin-right: 20%;
   border-right: 1px solid #eff3f4;
-  border-left: 1px solid #eff3f4;
-  margin-left: 275px;
-  max-width: 600px;
 }
 
 @media (max-width: 1024px) {
   .feed-twitter {
-    margin-left: 88px;
+    width: calc(100% - 80px - 350px);
+    margin-left: 80px;
+    margin-right: 350px;
   }
 }
 
 @media (max-width: 768px) {
   .feed-twitter {
     margin-left: 0;
-    border-left: none;
+    margin-right: 0;
+    width: 100%;
   }
 }
 
@@ -86,9 +77,15 @@ body {
   right: 0;
   top: 0;
   height: 100vh;
-  width: 350px;
+  width: 20%;
   padding: 8px 16px;
   overflow-y: auto;
+}
+
+@media (max-width: 1024px) {
+  .widgets-twitter {
+    width: 350px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -113,7 +110,7 @@ body {
 .post-card {
   background: #ffffff;
   border-bottom: 1px solid #eff3f4;
-  padding: 12px 16px;
+  padding: 12px 24px;
   transition: background-color 0.2s;
   cursor: pointer;
 }
@@ -128,7 +125,7 @@ body {
   color: #ffffff;
   font-weight: 700;
   padding: 12px 24px;
-  border-radius: 9999px;
+  border-radius: 0.5rem;
   border: none;
   font-size: 15px;
   cursor: pointer;
@@ -148,7 +145,7 @@ body {
   color: #0f1419;
   font-weight: 700;
   padding: 8px 16px;
-  border-radius: 9999px;
+  border-radius: 0.5rem;
   border: 1px solid #cfd9de;
   font-size: 14px;
   cursor: pointer;
@@ -166,7 +163,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 9999px;
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.2s;
   color: #536471;

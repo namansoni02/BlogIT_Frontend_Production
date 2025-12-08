@@ -4,7 +4,6 @@
  * Service for fetching all users on the platform
  */
 
-import axios from "axios";
 import { GetAllUsersEndpoint } from "../api/APIEndpoints";
 
 /**
@@ -16,19 +15,28 @@ export const getAllUsers = async () => {
     const token = sessionStorage.getItem("token");
     
     if (!token) {
-      throw new Error("No authentication token found");
+      console.error("No authentication token found");
+      return [];
     }
 
-    const response = await axios.get(GetAllUsersEndpoint, {
+    const response = await fetch(GetAllUsersEndpoint, {
+      method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
     });
 
-    return response.data.users || [];
+    if (!response.ok) {
+      console.error("Failed to fetch users:", response.status, response.statusText);
+      return [];
+    }
+
+    const data = await response.json();
+    return data.users || [];
   } catch (error) {
-    console.error("Error fetching users:", error.response?.data || error.message);
-    throw error;
+    console.error("Error fetching users:", error);
+    return [];
   }
 };
 

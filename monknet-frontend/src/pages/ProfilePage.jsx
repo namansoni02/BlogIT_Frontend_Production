@@ -8,6 +8,9 @@ import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import PostBox from "../components/post/postBox";
+import ProfileFactBox from "../components/common/ProfileFactBox";
+import FactBox from "../components/common/FactBox";
+import ExtinctAnimalFact from "../components/common/ExtinctAnimalFact";
 import { getUserProfile } from "../services/ProfileService";
 import { followUser, unfollowUser } from "../services/FollowService";
 import { AuthContext } from "../context/AuthContext";
@@ -112,22 +115,29 @@ export default function ProfilePage() {
   const isOwnProfile = currentUser?.username === username;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="container-twitter">
       <Navbar />
       
-      <div className="max-w-5xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>Back</span>
-        </button>
+      {/* Center Feed */}
+      <div className="feed-twitter">
+        {/* Feed Header */}
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-[#eff3f4]">
+          <div className="px-4 py-3 flex items-center justify-between">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-[#0f1419] hover:text-[#536471] transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-semibold">Profile</span>
+            </button>
+          </div>
+        </div>
 
-        {/* Profile Header */}
-        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+        {/* Posts Feed */}
+        <div className="overflow-y-auto">
+          {/* Profile Header */}
+          <div className="bg-white border-b border-[#eff3f4] p-6">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             {/* Avatar */}
             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-lg">
               {profileData.username.charAt(0).toUpperCase()}
@@ -136,14 +146,14 @@ export default function ProfilePage() {
             {/* Profile Info */}
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-                <h1 className="text-3xl font-bold text-slate-900">{profileData.username}</h1>
+                <h1 className="text-2xl font-bold text-[#0f1419]">{profileData.username}</h1>
                 {!isOwnProfile && (
                   <button
                     onClick={handleFollowToggle}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                    className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
                       isFollowing
-                        ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                        : "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg"
+                        ? "bg-[#eff3f4] text-[#0f1419] hover:bg-[#d7dbdc]"
+                        : "bg-[#0f1419] text-white hover:bg-[#272c30]"
                     }`}
                   >
                     {isFollowing ? "Following" : "Follow"}
@@ -151,43 +161,43 @@ export default function ProfilePage() {
                 )}
               </div>
               
-              <p className="text-slate-600 mb-4">{profileData.email}</p>
+              <p className="text-[#536471] mb-4">{profileData.email}</p>
               
               {profileData.userBio && (
-                <p className="text-slate-700 mb-6">{profileData.userBio}</p>
+                <p className="text-[#0f1419] mb-4">{profileData.userBio}</p>
               )}
 
               {/* Stats */}
               <div className="flex flex-wrap justify-center md:justify-start gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">
+                <div className="text-center md:text-left">
+                  <span className="text-[#0f1419] font-bold">
                     {formatNumber(profileData.stats.followers)}
-                  </div>
-                  <div className="text-sm text-slate-500">Followers</div>
+                  </span>
+                  <span className="text-[#536471] text-sm ml-1">Followers</span>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">
+                <div className="text-center md:text-left">
+                  <span className="text-[#0f1419] font-bold">
                     {formatNumber(profileData.stats.following)}
-                  </div>
-                  <div className="text-sm text-slate-500">Following</div>
+                  </span>
+                  <span className="text-[#536471] text-sm ml-1">Following</span>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">
+                <div className="text-center md:text-left">
+                  <span className="text-[#0f1419] font-bold">
                     {formatNumber(profileData.stats.posts)}
-                  </div>
-                  <div className="text-sm text-slate-500">Posts</div>
+                  </span>
+                  <span className="text-[#536471] text-sm ml-1">Posts</span>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">
+                <div className="text-center md:text-left">
+                  <span className="text-[#0f1419] font-bold">
                     {formatNumber(profileData.stats.likes)}
-                  </div>
-                  <div className="text-sm text-slate-500">Likes</div>
+                  </span>
+                  <span className="text-[#536471] text-sm ml-1">Likes</span>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">
+                <div className="text-center md:text-left">
+                  <span className="text-[#0f1419] font-bold">
                     {formatNumber(profileData.stats.views)}
-                  </div>
-                  <div className="text-sm text-slate-500">Views</div>
+                  </span>
+                  <span className="text-[#536471] text-sm ml-1">Views</span>
                 </div>
               </div>
             </div>
@@ -195,32 +205,43 @@ export default function ProfilePage() {
         </div>
 
         {/* Posts Section */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">
-            {isOwnProfile ? "Your Posts" : `${profileData.username}'s Posts`}
-          </h2>
-          
-          {posts.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 text-lg">No posts yet</p>
-              {isOwnProfile && (
-                <button
-                  onClick={() => navigate("/create-post")}
-                  className="mt-4 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
-                >
-                  Create Your First Post
-                </button>
-              )}
+        <div className="bg-white">
+          <div className="p-4 border-b border-[#eff3f4]">
+              <h2 className="text-xl font-bold text-[#0f1419]">
+                {isOwnProfile ? "Your Posts" : `${profileData.username}'s Posts`}
+              </h2>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {posts.map((post) => (
-                <PostBox key={post._id} post={post} />
-              ))}
-            </div>
-          )}
+            
+            {posts.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <FileText className="w-16 h-16 text-[#536471] mx-auto mb-4 opacity-50" />
+                <p className="text-[#536471] text-base">No posts yet</p>
+                <p className="text-[#536471] text-base">No posts yet</p>
+                {isOwnProfile && (
+                  <button
+                    onClick={() => navigate("/create-post")}
+                    className="mt-4 px-6 py-2 bg-[#1d9bf0] text-white rounded-full font-bold hover:bg-[#1a8cd8] transition-all"
+                  >
+                    Create Your First Post
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div>
+                {posts.map((post) => (
+                  <PostBox key={post._id} post={post} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+      </div>
+
+      {/* Right Sidebar - Widgets */}
+      <div className="widgets-twitter">
+        <ProfileFactBox />
+        <FactBox />
+        <ExtinctAnimalFact />
       </div>
     </div>
   );

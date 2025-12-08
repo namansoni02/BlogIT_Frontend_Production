@@ -1,25 +1,22 @@
 import Navbar from "../components/common/Navbar";
 import { useContext , useState ,useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
-import UserDetailsFetching from "../services/UserDetailsFetchingService";
-import UserStatsBox from "@/components/post/userStatsBox";
 import getPostsService from "../services/getPostsService";
 import PostBox from "../components/post/postBox";
-import { ChevronDown } from "lucide-react";
+import FactBox from "../components/common/FactBox";
+import ExtinctAnimalFact from "../components/common/ExtinctAnimalFact";
+import ProfileFactBox from "../components/common/ProfileFactBox";
+import { ChevronDown, LogOut, MoreHorizontal, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext);
-  const [data, setdata] = useState(null);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
   const feedRef = useRef(null);
-
-  // Fetch user details
-  useEffect(() => {
-    UserDetailsFetching().then(setdata);
-  }, []);
 
   // Fetch posts when page changes
   useEffect(() => {
@@ -27,7 +24,9 @@ export default function Dashboard() {
       setLoading(true);
       setHasScrolledToEnd(false);
       try {
+        console.log("Fetching posts for page:", page);
         const fetchedPosts = await getPostsService(page);
+        console.log("Received posts:", fetchedPosts);
         
         if (fetchedPosts && fetchedPosts.length > 0) {
           setPosts((prevPosts) => {
@@ -39,8 +38,11 @@ export default function Dashboard() {
               index === self.findIndex((p) => (p._id || p.id) === (post._id || post.id))
             );
             
+            console.log("Updated posts state:", uniquePosts);
             return uniquePosts;
           });
+        } else {
+          console.log("No posts fetched");
         }
       } catch (error) {
         console.error("Error loading posts:", error);
@@ -78,6 +80,11 @@ export default function Dashboard() {
     setPage((prevPage) => prevPage + 1);
   };
 
+  // Handle post deletion
+  const handleDeletePost = (postId) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+  };
+
   return (
     <div className="container-twitter">
       <Navbar />
@@ -86,18 +93,42 @@ export default function Dashboard() {
       <div className="feed-twitter">
         {/* Feed Header */}
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-[#eff3f4]">
-          <div className="px-4 py-3">
-            <h2 className="text-xl font-bold text-[#0f1419]">Home</h2>
-          </div>
-          
-          {/* Feed Tabs */}
-          <div className="flex border-b border-[#eff3f4]">
-            <button className="tab-twitter active flex-1 py-4 font-semibold text-[#0f1419]">
-              For you
-            </button>
-            <button className="tab-twitter flex-1 py-4 font-semibold text-[#536471] hover:bg-gray-50">
-              Following
-            </button>
+          <div className="px-4 py-3 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-[#0f1419] px-6">Home</h2>
+            
+            {/* User Profile - Top Right */}
+            {user && (
+              <div className="relative group">
+                <button className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-100 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-[#1d9bf0] flex items-center justify-center text-white text-sm font-bold">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-bold text-[#0f1419] hidden sm:inline">{user.username}</span>
+                  <MoreHorizontal size={16} className="text-[#536471]" />
+                </button>
+
+                {/* Dropdown */}
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden border border-[#eff3f4]">
+                  <button
+                    onClick={() => navigate(`/profile/${user.username}`)}
+                    className="w-full px-4 py-3 text-left text-sm font-bold text-[#0f1419] hover:bg-gray-50 transition-colors flex items-center gap-3"
+                  >
+                    <User size={18} />
+                    Profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      logout();
+                      navigate("/login");
+                    }}
+                    className="w-full px-4 py-3 text-left text-sm font-bold text-[#0f1419] hover:bg-gray-50 transition-colors flex items-center gap-3"
+                  >
+                    <LogOut size={18} />
+                    Log out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -117,7 +148,7 @@ export default function Dashboard() {
                 console.warn("Skipping invalid post (ID only):", post);
                 return null;
               }
-              return <PostBox key={post._id || post.id} post={post} />;
+              return <PostBox key={post._id || post.id} post={post} onDelete={handleDeletePost} />;
             })
           ) : (
             !loading && (
@@ -128,15 +159,15 @@ export default function Dashboard() {
             )
           )}
 
-          {/* Load More Button */}
-          {hasScrolledToEnd && !loading && posts.length > 0 && (
+          {/* Load More Button - Always visible at bottom when there are posts */}
+          {!loading && posts.length > 0 && (
             <div className="flex justify-center py-6 border-t border-[#eff3f4]">
               <button
                 onClick={handleLoadMore}
-                className="flex items-center gap-2 px-6 py-2 text-[#1d9bf0] hover:bg-[#1d9bf0]/10 rounded-full transition-colors font-semibold"
+                className="flex items-center gap-1 px-3 py-1.5 text-black border-2 border-black hover:bg-gray-100 rounded transition-colors text-sm"
               >
-                <span>Load More Posts</span>
-                <ChevronDown size={20} />
+                <ChevronDown size={16} />
+                <span>Load More</span>
               </button>
             </div>
           )}
@@ -152,29 +183,14 @@ export default function Dashboard() {
 
       {/* Right Sidebar - Widgets */}
       <div className="widgets-twitter">
-        {/* What's happening */}
-        <div className="card-twitter mb-4">
-          <h2 className="text-xl font-bold text-[#0f1419] p-4 pb-3">What's happening</h2>
-          
-          <div className="hover:bg-gray-50 transition-colors cursor-pointer p-4 border-b border-[#eff3f4]">
-            <div className="text-xs text-[#536471] mb-1">Trending in Technology</div>
-            <div className="font-semibold text-[#0f1419]">#BlogIT</div>
-            <div className="text-xs text-[#536471] mt-1">2,847 posts</div>
-          </div>
+        {/* Useless Fact */}
+        <ProfileFactBox />
 
-          <div className="hover:bg-gray-50 transition-colors cursor-pointer p-4 border-b border-[#eff3f4]">
-            <div className="text-xs text-[#536471] mb-1">Trending in Coding</div>
-            <div className="font-semibold text-[#0f1419]">#WebDev</div>
-            <div className="text-xs text-[#536471] mt-1">5,234 posts</div>
-          </div>
+        {/* Random Fact */}
+        <FactBox />
 
-          <div className="hover:bg-gray-50 transition-colors cursor-pointer p-4">
-            <div className="text-[#1d9bf0] text-sm hover:underline">Show more</div>
-          </div>
-        </div>
-
-        {/* User Stats */}
-        {data && <UserStatsBox data={data}/>}
+        {/* Extinct Animal */}
+        <ExtinctAnimalFact />
       </div>
     </div>
   );

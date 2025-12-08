@@ -36,6 +36,7 @@ export default function LoginBox() {
     if (data?.token) {
       //console.log(data.token);
       sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("userId", data.userId);
       // Using the AuthContext to set the token, this updates the context and triggers any necessary re-renders
       setToken(data.token);
 
@@ -53,7 +54,7 @@ export default function LoginBox() {
       <div className="w-full max-w-md border-2 border-black p-8 rounded-lg">
         {/* MonkNet Logo */}
         <div className="text-center mb-6">
-          <img src={logo} alt="MonkNet" className="w-40 h-40 mx-auto mb-4" />
+          <img src={logo} alt="MonkNet" className="w-32 h-32 mx-auto mb-4 select-none pointer-events-none" />
           <h1 className="text-2xl font-bold text-[#0f1419]">Sign in to MonkNet</h1>
         </div>
 
@@ -117,7 +118,7 @@ export default function LoginBox() {
             Don't have an account?{" "}
           </span>
           <button
-            className="text-[#1d9bf0] font-normal hover:underline"
+            className="text-black font-bold hover:underline"
             onClick={() => navigate("/signup")}
           >
             Sign up
