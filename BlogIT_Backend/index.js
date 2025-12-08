@@ -18,7 +18,7 @@ const app = express();
 
 // CORS Configuration (must be before routes)
 app.use(cors({
-  origin: ["http://localhost:5173", "https://blog-it-frontend-deployment.vercel.app"],
+  origin: ["https://blog-it-frontend-production-git-main-namansonicp-7883s-projects.vercel.app/"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
