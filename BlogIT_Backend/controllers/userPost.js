@@ -64,8 +64,8 @@ const getAllPosts = async (req, res) => {
   try {
     const page = req.query.page || 1;
     const startingPost = (page - 1) * 5;
-    // const posts = await Post.find({ author: { $ne: req.user._id } }).sort({ createdAt: -1 }).skip(startingPost).limit(5).populate('author', 'username email');
-    const posts = await Post.find().sort({ createdAt: -1 }).skip(startingPost).limit(5).populate('author', 'username email');
+    // const posts = await Post.find({ author: { $ne: req.user._id } }).sort({ createdAt: -1 }).skip(startingPost).limit(5).populate('author', 'username email profileImage');
+    const posts = await Post.find().sort({ createdAt: -1 }).skip(startingPost).limit(5).populate('author', 'username email profileImage');
     return res.status(200).json({ posts });
   } catch (error) {
     console.error(error);

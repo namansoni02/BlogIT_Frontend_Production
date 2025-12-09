@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, profileImage } = req.body;
 
     const existingUserByUsername = await User.findOne({ username });
     if (existingUserByUsername) {
@@ -21,6 +21,7 @@ export const registerUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      profileImage: profileImage || null,
     });
 
     await newUser.save();

@@ -1,6 +1,6 @@
 import express from "express";
 import { protect } from "../middlewares/authenticateToken.js";
-import {getUserData,getFollowers,getFollowing,followUser,unfollowUser,getFollowNotifications,getUserByUsername,getAllUsers} from "../controllers/userData.js";
+import {getUserData,getFollowers,getFollowing,followUser,unfollowUser,getFollowNotifications,getUserByUsername,getAllUsers,updateProfileImage} from "../controllers/userData.js";
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router.get("/allusers", protect, getAllUsers);
 
 router.post("/follow/:userIdToFollow", protect, followUser);
 router.post("/unfollow/:userIdToUnfollow", protect, unfollowUser);
+router.put("/update-profile-image", protect, updateProfileImage);
 
 router.get("/:username", getUserByUsername);
  

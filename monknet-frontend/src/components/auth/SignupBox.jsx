@@ -26,6 +26,8 @@ export default function SignupBox() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   /**
    * Handles user signup by delegating API communication to SignUpService.
@@ -33,12 +35,23 @@ export default function SignupBox() {
    * On failure: surface backend validation responses.
    */
   const handleSignUp = async () => {
-    const data = await SignUpService(username, email, password);
+    // Clear previous error
+    setErrorMessage("");
+
+    // Basic validation
+    if (!username || !email || !password) {
+      setErrorMessage("Please fill in all required fields");
+      return;
+    }
+
+    const data = await SignUpService(username, email, password, profileImage);
 
     if (data.message === "User registered successfully") {
       console.info("Registration successful — redirecting user to login.");
       navigate("/login");
     } else {
+      // Display error message to user
+      setErrorMessage(data.message || "Registration failed. Please try again.");
       console.warn("Registration failed:", data.message);
     }
   };
@@ -51,6 +64,13 @@ export default function SignupBox() {
           <img src={logo} alt="MonkNet" className="w-32 h-32 mx-auto mb-4 select-none pointer-events-none" />
           <h1 className="text-2xl font-bold text-black">Join MonkNet today</h1>
         </div>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-300 rounded text-red-700 text-sm">
+            {errorMessage}
+          </div>
+        )}
 
         <div className="space-y-4">
           <div>
@@ -84,6 +104,29 @@ export default function SignupBox() {
               autoComplete="new-password"
               onChange={(e) => setPassword(e.target.value)}
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-black mb-2">Profile Picture URL (Optional)</label>
+            <input
+              type="url"
+              className="w-full px-3 py-2 bg-white border border-[#cfd9de] rounded text-black text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
+              placeholder="https://example.com/your-image.jpg"
+              value={profileImage}
+              onChange={(e) => setProfileImage(e.target.value)}
+            />
+            {profileImage && (
+              <div className="mt-2">
+                <img 
+                  src={profileImage} 
+                  alt="Profile preview" 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-black"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <button

@@ -40,6 +40,10 @@ import deletePostService from '@/services/deletePostService';
  * }} />
  */
 export default function PostBox({ post, onDelete }) {
+  // Debug: Log post author data
+  //console.log("PostBox - Author data:", post?.author);
+  //console.log("PostBox - Profile image:", post?.author?.profileImage);
+  
   // State for tracking if current user has liked the post
   // Get user data from sessionStorage and check if this post is in likedPosts array
   // Get user data from sessionStorage
@@ -189,9 +193,17 @@ export default function PostBox({ post, onDelete }) {
       <div className="flex items-start justify-between px-5">
         <div className="flex items-start gap-3 flex-1">
           {/* Author Avatar */}
-          <div className="avatar-twitter flex-shrink-0 ">
-            {post?.author?.username?.charAt(0).toUpperCase() || 'U'}
-          </div>
+          {post?.author?.profileImage ? (
+            <img 
+              src={post.author.profileImage}
+              alt={post.author.username}
+              className="w-10 h-10 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
+            />
+          ) : (
+            <div className="avatar-twitter flex-shrink-0">
+              {post?.author?.username?.charAt(0).toUpperCase() || 'U'}
+            </div>
+          )}
           
           {/* Post Content */}  
           <div className="flex-1 min-w-0">

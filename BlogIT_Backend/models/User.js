@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema(
       required: false
     },
 
+    profileImage: {
+      type: String,
+      required: false,
+      default: null
+    },
+
     postCount: {
         type: Number,
         default: 0

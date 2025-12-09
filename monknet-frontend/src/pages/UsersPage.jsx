@@ -174,9 +174,17 @@ export default function UsersPage() {
                     onClick={() => handleUserClick(user.username)}
                   >
                     {/* Avatar */}
-                    <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center text-white text-xl font-bold">
-                      {user.username.charAt(0).toUpperCase()}
-                    </div>
+                    {user.profileImage ? (
+                      <img 
+                        src={user.profileImage} 
+                        alt={user.username}
+                        className="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center text-white text-xl font-bold">
+                        {user.username.charAt(0).toUpperCase()}
+                      </div>
+                    )}
 
                     {/* User Info */}
                     <div className="flex-1">

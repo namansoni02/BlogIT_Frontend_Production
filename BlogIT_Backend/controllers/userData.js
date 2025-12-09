@@ -9,8 +9,10 @@ const getUserData = async (req, res) => {
             return res.status(404).json({message: 'User not found'});
         }
         return res.status(200).json({
+            _id: user._id,
             username: user.username,
             email: user.email,
+            profileImage: user.profileImage,
             posts: postTitles,
             stats: {
                 followers: user.followers.length,
@@ -133,7 +135,7 @@ const getUserByUsername = async (req, res) => {
         }
 
         const posts = await Post.find({ author: user._id })
-            .populate('author', 'username email')
+            .populate('author', 'username email profileImage')
             .sort({ createdAt: -1 });
 
         return res.status(200).json({
@@ -141,6 +143,7 @@ const getUserByUsername = async (req, res) => {
                 _id: user._id,
                 username: user.username,
                 email: user.email,
+                profileImage: user.profileImage,
                 stats: {
                     followers: user.followers.length,
                     following: user.following.length,
@@ -160,7 +163,7 @@ const getUserByUsername = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('username email followers following _id');
+        const users = await User.find().select('username email followers following _id profileImage');
         return res.status(200).json({ users });
     } catch (error) {
         console.error(error);
@@ -168,4 +171,32 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-export {getUserData, getFollowers,getFollowing, followUser, unfollowUser, getFollowNotifications, getUserByUsername, getAllUsers};
+const updateProfileImage = async (req, res) => {
+    try {
+        const { profileImage } = req.body;
+        
+        if (!profileImage) {
+            return res.status(400).json({ message: 'Profile image URL is required' });
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { profileImage },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json({ 
+            message: 'Profile image updated successfully',
+            profileImage: user.profileImage 
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export {getUserData, getFollowers,getFollowing, followUser, unfollowUser, getFollowNotifications, getUserByUsername, getAllUsers, updateProfileImage};

@@ -16,6 +16,8 @@ export default function FactBox() {
       }
       const data = await response.json();
       setFact(data);
+      // Save to session storage
+      sessionStorage.setItem('cachedRandomFact', JSON.stringify(data));
     } catch (err) {
       setError(err.message);
       console.error('Error fetching fact:', err);
@@ -25,7 +27,20 @@ export default function FactBox() {
   };
 
   useEffect(() => {
-    fetchFact();
+    // Check if we have cached data
+    const cachedFact = sessionStorage.getItem('cachedRandomFact');
+    if (cachedFact) {
+      try {
+        setFact(JSON.parse(cachedFact));
+        setLoading(false);
+      } catch (err) {
+        // If parsing fails, fetch new data
+        fetchFact();
+      }
+    } else {
+      // No cached data, fetch new
+      fetchFact();
+    }
   }, []);
 
   return (

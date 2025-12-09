@@ -13,8 +13,10 @@ import FactBox from "../components/common/FactBox";
 import ExtinctAnimalFact from "../components/common/ExtinctAnimalFact";
 import { getUserProfile } from "../services/ProfileService";
 import { followUser, unfollowUser } from "../services/FollowService";
+import { updateProfileImage } from "../services/UpdateProfileImageService";
+import UserDetailsFetching from "../services/UserDetailsFetchingService";
 import { AuthContext } from "../context/AuthContext";
-import { Users, FileText, Heart, Eye, ArrowLeft } from "lucide-react";
+import { Users, FileText, Heart, Eye, ArrowLeft, Camera } from "lucide-react";
 
 export default function ProfilePage() {
   const { username } = useParams();
@@ -25,12 +27,21 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [newImageUrl, setNewImageUrl] = useState("");
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
         const data = await getUserProfile(username);
+        //console.log("Profile data received:", data);
+        //console.log("Profile image URL:", data.user?.profileImage);
+        // console.log("Storing profile image in sessionStorage:", data.user?.profileImage);
+        // const fetchedProfileImage=sessionStorage.getItem("userProfilePicture");
+        // console.log("Fetched profile image from sessionStorage:", fetchedProfileImage);
+        localStorage.setItem("userProfilePicture", data.user?.profileImage || "");
         setProfileData(data.user);
         setPosts(data.posts || []);
         
@@ -82,6 +93,36 @@ export default function ProfilePage() {
       return (num / 1000).toFixed(1) + 'K';
     }
     return num.toString();
+  };
+
+  const handleUpdateProfileImage = async () => {
+    if (!newImageUrl.trim()) {
+      alert("Please enter a valid image URL");
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      await updateProfileImage(newImageUrl);
+      
+      // Refetch user data to update sessionStorage
+      await UserDetailsFetching();
+      
+      // Update local state
+      setProfileData(prev => ({
+        ...prev,
+        profileImage: newImageUrl
+      }));
+      
+      setShowImageModal(false);
+      setNewImageUrl("");
+      alert("Profile image updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile image:", error);
+      alert("Failed to update profile image: " + error.message);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   if (loading) {
@@ -139,8 +180,29 @@ export default function ProfilePage() {
           <div className="bg-white border-b border-[#eff3f4] p-6">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             {/* Avatar */}
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-lg">
-              {profileData.username.charAt(0).toUpperCase()}
+            <div className="relative">
+              {profileData.profileImage ? (
+                <img 
+                  src={profileData.profileImage}
+                  alt={profileData.username}
+                  className="w-32 h-32 rounded-full object-cover border-4 border-[#1d9bf0] shadow-lg"
+                />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-lg">
+                  {profileData.username.charAt(0).toUpperCase()}
+                </div>
+              )}
+              
+              {/* Edit Button - Only show for own profile */}
+              {isOwnProfile && (
+                <button
+                  onClick={() => setShowImageModal(true)}
+                  className="absolute bottom-0 right-0 bg-black text-white p-2 rounded-full hover:bg-gray-800 transition-colors border-2 border-white shadow-lg"
+                  title="Change profile picture"
+                >
+                  <Camera size={20} />
+                </button>
+              )}
             </div>
 
             {/* Profile Info */}
@@ -243,6 +305,65 @@ export default function ProfilePage() {
         <FactBox />
         <ExtinctAnimalFact />
       </div>
+
+      {/* Update Profile Image Modal */}
+      {showImageModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 border-2 border-black">
+            <h2 className="text-xl font-bold text-black mb-4">Update Profile Picture</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Image URL
+                </label>
+                <input
+                  type="url"
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
+                  placeholder="https://example.com/your-image.jpg"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                />
+              </div>
+
+              {/* Image Preview */}
+              {newImageUrl && (
+                <div className="flex justify-center">
+                  <img
+                    src={newImageUrl}
+                    alt="Preview"
+                    className="w-32 h-32 rounded-full object-cover border-2 border-black"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleUpdateProfileImage}
+                  disabled={updating || !newImageUrl.trim()}
+                  className="flex-1 bg-black text-white px-4 py-2 rounded font-bold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  {updating ? "Updating..." : "Update"}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowImageModal(false);
+                    setNewImageUrl("");
+                  }}
+                  disabled={updating}
+                  className="flex-1 bg-white text-black px-4 py-2 rounded font-bold border-2 border-black hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

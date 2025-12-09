@@ -14,16 +14,18 @@ import { SignUpEndpoint } from "../api/APIEndpoints";
  * @param {string} username - Desired unique username for new account
  * @param {string} email - Valid email address associated with user account
  * @param {string} password - User's raw password (hashed securely on backend)
+ * @param {string} profileImage - URL of profile image (optional)
  * @returns {Promise<Object>} API response containing a success message if registered,
  *                            or an error message for validation/server issues.
  */
-async function SignUpService(username, email, password) {
+async function SignUpService(username, email, password, profileImage) {
   try {
     // Execute HTTP POST request to backend
     const response = await axios.post(SignUpEndpoint, {
       username,
       email,
       password,
+      profileImage: profileImage || null,
     });
 
     return response.data;
