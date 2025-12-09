@@ -32,7 +32,6 @@ export default function UsersPage() {
         const data = await getAllUsers();
         
         if (!data || data.length === 0) {
-          console.log("No users found");
           setUsers([]);
           setFilteredUsers([]);
           return;

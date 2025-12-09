@@ -2,7 +2,6 @@ import {GetAllPostEndpoint} from '../api/APIEndpoints.jsx';
 export default async function getPostsService(page = 1) {
     try{
         const JWT_Token = sessionStorage.getItem("token");
-        console.log("Fetching posts from:", `${GetAllPostEndpoint}?page=${page}`);
         const response = await fetch(`${GetAllPostEndpoint}?page=${page}`, {
             method: "GET",
             headers: {
@@ -17,7 +16,6 @@ export default async function getPostsService(page = 1) {
         }
         
         const data = await response.json();
-        console.log("Posts fetched:", data);
         return data.posts || [];
     }
     catch(error){

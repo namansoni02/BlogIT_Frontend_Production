@@ -9,7 +9,7 @@ export default async function UserDetailsFetching(){
                 Authorization: `Bearer ${JWT_Token}`
             }
         });
-        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx00000:", data.data.profileImage);
+        
         // Store user details in sessionStorage
         sessionStorage.setItem("userData", JSON.stringify(data.data));
         

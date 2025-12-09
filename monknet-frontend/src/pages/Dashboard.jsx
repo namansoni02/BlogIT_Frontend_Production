@@ -29,16 +29,12 @@ export default function Dashboard() {
         if (cachedUserData) {
           const parsedData = JSON.parse(cachedUserData);
           setUserProfile(parsedData);
-          console.log("User data from sessionStorage:", parsedData);
-          console.log("User profile image from sessionStorage:", parsedData.profileImage);
         }
         
         // Then fetch fresh data
         const userData = await UserDetailsFetching();
         if (userData) {
           setUserProfile(userData);
-          console.log("Fresh user data fetched:", userData);
-          console.log("User profile image:", userData.profileImage);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -58,9 +54,7 @@ export default function Dashboard() {
       setLoading(true);
       setHasScrolledToEnd(false);
       try {
-        console.log("Fetching posts for page:", page);
         const fetchedPosts = await getPostsService(page);
-        console.log("Received posts:", fetchedPosts);
         
         if (fetchedPosts && fetchedPosts.length > 0) {
           setPosts((prevPosts) => {
@@ -72,11 +66,8 @@ export default function Dashboard() {
               index === self.findIndex((p) => (p._id || p.id) === (post._id || post.id))
             );
             
-            console.log("Updated posts state:", uniquePosts);
             return uniquePosts;
           });
-        } else {
-          console.log("No posts fetched");
         }
       } catch (error) {
         console.error("Error loading posts:", error);
@@ -121,7 +112,6 @@ export default function Dashboard() {
   var profilePic;
   useEffect(() => {
     profilePic = localStorage.getItem("userProfilePicture");
-    //console.log("Rendering Dashboard - Profile Picture URL:", profilePic);
   }, [userProfile, user]);
   
   return (
@@ -145,7 +135,6 @@ export default function Dashboard() {
                       alt={(userProfile?.username || user?.username)}
                       className="w-8 h-8 rounded-full object-cover border-2 border-gray-200"
                       onError={(e) => {
-                        console.log("Image failed to load, hiding element");
                         e.target.style.display = 'none';
                       }}
                     />
